@@ -87,7 +87,7 @@
       <div class="col-md-1" >
       </div>
       <div class="col-md-10" >
-        <form th:action="@{/articles/createArticle}" method="post" th:object="${articleForm}">
+        <form th:action="@{/articles/updateArticle/{articleId}(articleId = ${article.id})}" method="post" th:object="${articleForm}">
           <div class="mb-3">
             <label for="" class="form-label">
               게시글 제목
@@ -102,11 +102,14 @@
               게시글 내용
             </label>
             <div class="input-group">
-              <textarea name="contents" th:value="${article.content}" class="form-control" id="contents" th:field="*{content}"></textarea>
+              <textarea name="contents" class="form-control" id="contents" th:field="*{content}"></textarea>
               <script th:inline="javascript">
                 CKEDITOR.replace("contents", {
                   filebrowserImageUploadUrl: "/imageArticle/upload",
                   extraPlugins : 'autogrow'
+                });
+                CKEDITOR.instances.contents.on('instanceReady', function() {
+                  this.setData([[${article.content}]]);
                 });
               </script>
             </div>

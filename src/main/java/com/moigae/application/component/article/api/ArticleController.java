@@ -20,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/articles")
@@ -114,5 +115,21 @@ public class ArticleController {
         model.addAttribute("article", article);
 
         return "articles/updateArticle";
+    }
+
+    @PostMapping("/updateArticle/{articleId}")
+    public String updateArticle(
+            @PathVariable("articleId") Long articleId,
+            @ModelAttribute ArticleForm articleForm
+    ) {
+        Optional<Article> optionalArticle = articleRepository.findById(articleId);
+        if (optionalArticle.isPresent()) {
+            Article article = optionalArticle.get();
+            article.setArticleTitle(articleForm.getArticleTitle());
+            article.setContent(articleForm.getContent());
+            article.setImgurl(fileService.getUrl(articleForm.getContent()));
+            articleRepository.save(article);
+        }
+        return "redirect:/articles/articleList";
     }
 }
