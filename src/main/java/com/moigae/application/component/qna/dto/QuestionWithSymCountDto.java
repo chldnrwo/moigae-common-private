@@ -26,8 +26,10 @@ public class QuestionWithSymCountDto {
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
     private Long sym;
+    private Long totalAnswersCount;
+    private String relativeTime;
 
-    public QuestionWithSymCountDto(Question question, long symCount) {
+    public QuestionWithSymCountDto(Question question, long symCount, long totalAnswersCount) {
         this.id = question.getId();
         this.userId = question.getUserId();
         this.questionTitle = question.getQuestionTitle();
@@ -36,5 +38,7 @@ public class QuestionWithSymCountDto {
         this.createTime = question.getCreateTime();
         this.updateTime = question.getUpdateTime();
         this.sym = symCount;
+        this.totalAnswersCount = totalAnswersCount;
     }
 }
+

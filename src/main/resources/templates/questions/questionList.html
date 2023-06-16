@@ -120,25 +120,37 @@
         <br>
         <div class="row">
           <div th:each="question : ${questions}">
+            <hr>
             <div th:onclick="'window.location.href=\'' + @{/questions/questionDetail/{questionId}(questionId = ${question.id})} + '\''" class="container">
+              <div style="font-weight: bold; font-size: 16px;" th:text="${#strings.abbreviate(question.questionTitle, 30)}" ></div>
               <br>
-              <div th:text="${question.questionTitle}"></div>
-              <div th:text="${question.questionContent}"></div>
+              <div style="font-size: 13px;" th:text="${#strings.abbreviate(question.questionContent, 30)}" ></div>
               <div class="d-flex justify-content-between">
                 <span>
-                  <span></span>
-                  <span></span>
+                  <span style="color: #969696; font-size: 12px;" th:text="${question.relativeTime}"></span>
+                  <span th:text="${question.totalAnswersCount} == 0 ? '미답변' : '답변'"
+                        th:style="${question.totalAnswersCount} == 0 ? 'color: #969696; font-size: 12px' : 'color: red; font-size: 12px'"> </span>
                 </span>
-                <span class="justify-content-end">
-                  <span></span>
-                  <span></span>
+                <span class="justify-content-end" style="color: #969696; font-size: 12px;">
+                  <span>공감 </span>
+                  <span th:text="${question.sym}"></span>
+                  <span>&ensp;</span>
+                  <span>조회수 </span>
+                  <span th:text="${question.viewCount}"></span>
                 </span>
               </div>
             </div>
           </div>
         </div>
 
+        <br>
+
+        <div class="container">
+
+        </div>
       </div>
+
+
     </div>
   </div>
 </div>

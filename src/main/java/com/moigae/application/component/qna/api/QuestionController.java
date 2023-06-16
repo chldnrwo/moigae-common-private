@@ -51,9 +51,9 @@ public class QuestionController {
         User user = userRepository.findByEmail(customUser.getUsername());
         Question question = new Question(user, articleForm.getArticleTitle(), articleForm.getContent(), 0);
         questionRepository.save(question);
-        return "redirect:/";
+        return "redirect:/questions/questionList";
     }
-    //questions/questionList
+    //
     //          Question    question
 
     public String getQuestionList(Model model,
@@ -80,7 +80,7 @@ public class QuestionController {
     @GetMapping("/questionList")
     public String articleList(Model model,
                               @AuthenticationPrincipal CustomUser customUser,
-                              @PageableDefault(size = 12) Pageable pageable) {
+                              @PageableDefault(size = 6) Pageable pageable) {
         return getQuestionList(model, customUser, pageable, "questions/questionList");
     }
 

@@ -113,7 +113,7 @@
           <div class="row">
             <div th:each="article : ${articles}">
               <div th:onclick="'window.location.href=\'' + @{/articles/issueDetail/{articleId}(articleId = ${article.id})} + '\''" class="shadow-sm p-3 mb-3 bg-body rounded">
-                <span th:text="${article.articleTitle}" style="font-weight: bold;"></span>
+                <span th:text="${#strings.abbreviate(article.articleTitle, 30)}"  style="font-weight: bold;"></span>
                 <span class="d-flex justify-content-end"
                         th:text="${#temporals.format(article.createTime, 'yyyy-MM-dd')}" style="font-size: 11px; color: #969696;"></span>
               </div>
