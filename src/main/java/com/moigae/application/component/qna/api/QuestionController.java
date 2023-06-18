@@ -8,9 +8,11 @@ import com.moigae.application.component.article.repository.ArticleRepository;
 import com.moigae.application.component.qna.api.service.QuestionService;
 import com.moigae.application.component.qna.domain.Answer;
 import com.moigae.application.component.qna.domain.Question;
+import com.moigae.application.component.qna.domain.Sym;
 import com.moigae.application.component.qna.dto.QuestionWithSymCountDto;
 import com.moigae.application.component.qna.repository.AnswerRepository;
 import com.moigae.application.component.qna.repository.QuestionRepository;
+import com.moigae.application.component.qna.repository.SymRepository;
 import com.moigae.application.component.user.domain.User;
 import com.moigae.application.component.user.dto.CustomUser;
 import com.moigae.application.component.user.repository.UserRepository;
@@ -27,6 +29,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -39,7 +44,7 @@ public class QuestionController {
     private final QuestionService questionService;
     private final UserRepository userRepository;
     private final AnswerRepository answerRepository;
-
+    private final SymRepository symRepository;
     @GetMapping("/createQuestion")
     public String createQuestion(Model model,
                                 @AuthenticationPrincipal CustomUser customUser) {
@@ -153,22 +158,41 @@ public class QuestionController {
         return "redirect:/questions/questionList";
     }
 
-//    @PostMapping("/symUp/{questionId}/{userId}")
-//    public void symUp(
-//            @PathVariable("questionId") String questionId,
-//            @PathVariable("userId") String userId
-//    ){
-//        Answer answer = answerRepository.findByUserIdAndQuestionId(userId, questionId);
-//        boolean toggle = false;
-//        if(answer.isSym()){
-//            toggle = false;
-//        }else{
-//            toggle = true;
-//        }
-//        answer.setSym(toggle);
-//        answerRepository.save(answer);
-//        QuestionWithSymCountDto qd = questionService.getQuestionWithSymCount2(questionId);
-//        System.out.println(qd);
-//
-//    }
+    @PostMapping("/symUp/{questionId}/{userId}")
+    @ResponseBody
+    public Map<String, Long> symUp(
+            @PathVariable("questionId") String questionId,
+            @PathVariable("userId") String userId
+    ){
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new ResourceNotFoundException("User not found with id " + userId));
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId));
+
+        Sym sym = symRepository.findByUserIdAndQuestionId(userId, questionId);
+        boolean toggle = false;
+        if (sym == null) {
+            sym = new Sym(question, user, true);
+        }else{
+            if(sym.isSym()){
+                toggle = false;
+            }else{
+                toggle = true;
+            }
+            sym.setSym(toggle);
+            sym.setQuestion(question);
+            sym.setUser(user);
+
+        }
+        symRepository.save(sym);
+
+        List<Sym> symList = symRepository.findByQuestionIdAndSymTrue(questionId);
+        long symLen = symList.size();
+
+        Map<String, Long> response = new HashMap<>();
+        response.put("newSymValue", symLen);
+        return response;
+
+    }
 }

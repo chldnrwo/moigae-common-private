@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AnswerRepository extends JpaRepository<Answer, String> {
-    Answer findByUserIdAndQuestionId(String userId, String questionId);
 }

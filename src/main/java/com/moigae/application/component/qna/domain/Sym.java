@@ -14,10 +14,8 @@ import javax.persistence.*;
 @Data
 public class Sym {
     @Id
-    @Column(length = 191)
-    @GeneratedValue(generator = "CUID")
-    @GenericGenerator(name = "CUID", strategy = "com.moigae.application.core.config.PrimaryGenerator")
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")

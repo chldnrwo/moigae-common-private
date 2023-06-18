@@ -20,10 +20,26 @@ public class QuestionService {
     @PersistenceContext
     private EntityManager entityManager;
 
+//    public Page<QuestionWithSymCountDto> getQuestionsWithSymCount(Pageable pageable, String sort, String searchTerm) {
+//        String jpql = "SELECT new com.moigae.application.component.qna.dto.QuestionWithSymCountDto(q, COUNT(a.sym), COUNT(a)) " +
+//                "FROM com.moigae.application.component.qna.domain.Question q " +
+//                "LEFT JOIN com.moigae.application.component.qna.domain.Answer a ON a.question.id = q.id " +
+//                "WHERE q.questionTitle LIKE :searchTerm OR q.questionContent LIKE :searchTerm " +
+//                "GROUP BY q";
+//
+//        if ("views".equals(sort)) {
+//            jpql += " ORDER BY q.viewCount DESC";
+//        } else {
+//            jpql += " ORDER BY q.createTime DESC";
+//        }
+//
+//        return getQuestionWithSymCountDtos(pageable, jpql, searchTerm);
+//    }
     public Page<QuestionWithSymCountDto> getQuestionsWithSymCount(Pageable pageable, String sort, String searchTerm) {
-        String jpql = "SELECT new com.moigae.application.component.qna.dto.QuestionWithSymCountDto(q, COUNT(a.sym), COUNT(a)) " +
+        String jpql = "SELECT new com.moigae.application.component.qna.dto.QuestionWithSymCountDto(q, SUM(CASE WHEN s.sym = true THEN 1 ELSE 0 END), COUNT(a)) " +
                 "FROM com.moigae.application.component.qna.domain.Question q " +
                 "LEFT JOIN com.moigae.application.component.qna.domain.Answer a ON a.question.id = q.id " +
+                "LEFT JOIN com.moigae.application.component.qna.domain.Sym s ON s.question.id = q.id " +
                 "WHERE q.questionTitle LIKE :searchTerm OR q.questionContent LIKE :searchTerm " +
                 "GROUP BY q";
 
@@ -35,6 +51,7 @@ public class QuestionService {
 
         return getQuestionWithSymCountDtos(pageable, jpql, searchTerm);
     }
+
 
     private Page<QuestionWithSymCountDto> getQuestionWithSymCountDtos(Pageable pageable, String jpql, String searchTerm) {
         String countJpql = "SELECT COUNT(q) FROM com.moigae.application.component.qna.domain.Question q WHERE q.questionTitle LIKE :searchTerm OR q.questionContent LIKE :searchTerm";
@@ -61,6 +78,48 @@ public class QuestionService {
         return new PageImpl<>(content, pageable, total);
     }
 
+    public QuestionWithSymCountDto getQuestionWithSymCount(String questionId) {
+        String jpql = "SELECT new com.moigae.application.component.qna.dto.QuestionWithSymCountDto(q, SUM(CASE WHEN s.sym = true THEN 1 ELSE 0 END), COUNT(a)) " +
+                "FROM com.moigae.application.component.qna.domain.Question q " +
+                "LEFT JOIN com.moigae.application.component.qna.domain.Answer a ON a.question.id = q.id " +
+                "LEFT JOIN com.moigae.application.component.qna.domain.Sym s ON s.question.id = q.id " +
+                "WHERE q.id = :questionId " +
+                "GROUP BY q";
+
+        TypedQuery<QuestionWithSymCountDto> query = entityManager.createQuery(jpql, QuestionWithSymCountDto.class);
+        query.setParameter("questionId", questionId);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            // No result found, return null or throw an exception as per your requirement
+            return null;
+        } catch (NonUniqueResultException e) {
+            // More than one result found, throw an exception or handle as per your requirement
+            throw new RuntimeException("Non unique result for questionId " + questionId);
+        }
+    }
+
+//    public QuestionWithSymCountDto getQuestionWithSymCount(String questionId) {
+//        String jpql = "SELECT new com.moigae.application.component.qna.dto.QuestionWithSymCountDto(q, COUNT(a.sym), COUNT(a)) " +
+//                "FROM com.moigae.application.component.qna.domain.Question q " +
+//                "LEFT JOIN com.moigae.application.component.qna.domain.Answer a ON a.question.id = q.id " +
+//                "WHERE q.id = :questionId " +
+//                "GROUP BY q";
+//        TypedQuery<QuestionWithSymCountDto> query = entityManager.createQuery(jpql, QuestionWithSymCountDto.class);
+//        query.setParameter("questionId", questionId);
+//
+//        try {
+//            return query.getSingleResult();
+//        } catch (NoResultException e) {
+//            // No result found, return null or throw an exception as per your requirement
+//            return null;
+//        } catch (NonUniqueResultException e) {
+//            // More than one result found, throw an exception or handle as per your requirement
+//            throw new RuntimeException("Non unique result for questionId " + questionId);
+//        }
+//    }
+
     public String getRelativeTime(LocalDateTime pastTime) {
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.between(pastTime, now);
@@ -78,26 +137,6 @@ public class QuestionService {
             return minutes + "분 전";
         } else {
             return seconds + "초 전";
-        }
-    }
-
-    public QuestionWithSymCountDto getQuestionWithSymCount(String questionId) {
-        String jpql = "SELECT new com.moigae.application.component.qna.dto.QuestionWithSymCountDto(q, COUNT(a.sym), COUNT(a)) " +
-                "FROM com.moigae.application.component.qna.domain.Question q " +
-                "LEFT JOIN com.moigae.application.component.qna.domain.Answer a ON a.question.id = q.id " +
-                "WHERE q.id = :questionId " +
-                "GROUP BY q";
-        TypedQuery<QuestionWithSymCountDto> query = entityManager.createQuery(jpql, QuestionWithSymCountDto.class);
-        query.setParameter("questionId", questionId);
-
-        try {
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            // No result found, return null or throw an exception as per your requirement
-            return null;
-        } catch (NonUniqueResultException e) {
-            // More than one result found, throw an exception or handle as per your requirement
-            throw new RuntimeException("Non unique result for questionId " + questionId);
         }
     }
 
