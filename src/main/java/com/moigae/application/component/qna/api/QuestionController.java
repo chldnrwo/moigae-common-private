@@ -6,8 +6,10 @@ import com.moigae.application.component.article.domain.Article;
 import com.moigae.application.component.article.domain.enumeration.Category;
 import com.moigae.application.component.article.repository.ArticleRepository;
 import com.moigae.application.component.qna.api.service.QuestionService;
+import com.moigae.application.component.qna.domain.Answer;
 import com.moigae.application.component.qna.domain.Question;
 import com.moigae.application.component.qna.dto.QuestionWithSymCountDto;
+import com.moigae.application.component.qna.repository.AnswerRepository;
 import com.moigae.application.component.qna.repository.QuestionRepository;
 import com.moigae.application.component.user.domain.User;
 import com.moigae.application.component.user.dto.CustomUser;
@@ -36,6 +38,7 @@ public class QuestionController {
     private final FileService fileService;
     private final QuestionService questionService;
     private final UserRepository userRepository;
+    private final AnswerRepository answerRepository;
 
     @GetMapping("/createQuestion")
     public String createQuestion(Model model,
@@ -148,5 +151,24 @@ public class QuestionController {
             questionRepository.save(question);
         }
         return "redirect:/questions/questionList";
+    }
+
+    @PostMapping("/symUp/{questionId}/{userId}")
+    public void symUp(
+            @PathVariable("questionId") String questionId,
+            @PathVariable("userId") String userId
+    ){
+        Answer answer = answerRepository.findByUserIdAndQuestionId(userId, questionId);
+        boolean toggle = false;
+        if(answer.isSym()){
+            toggle = false;
+        }else{
+            toggle = true;
+        }
+        answer.setSym(toggle);
+        answerRepository.save(answer);
+        QuestionWithSymCountDto qd = questionService.getQuestionWithSymCount2(questionId);
+        System.out.println(qd);
+
     }
 }

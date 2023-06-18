@@ -101,5 +101,33 @@ public class QuestionService {
         }
     }
 
+    public QuestionWithSymCountDto getQuestionWithSymCount2(String questionId) {
+        String jpql = "SELECT new com.moigae.application.component.qna.dto.QuestionWithSymCountDto(q, COUNT(a)) " +
+                "FROM com.moigae.application.component.qna.domain.Question q " +
+                "LEFT JOIN com.moigae.application.component.qna.domain.Answer a ON a.question.id = q.id AND a.sym = true " +
+                "WHERE q.id = :questionId " +
+                "GROUP BY q";
+
+        TypedQuery<QuestionWithSymCountDto> query = entityManager.createQuery(jpql, QuestionWithSymCountDto.class);
+        query.setParameter("questionId", questionId);
+
+        return query.getSingleResult();
+    }
+
+
+//    public void getSymUp(String questionId, String userId) {
+//        // 상황에 따라 적절하게 변경해야 합니다.
+//        String jpql = "UPDATE com.moigae.application.component.qna.domain.Answer a " +
+//                "SET a.sym = true " + // 또는 false 등 원하는 값으로 변경
+//                "WHERE a.question.id = :questionId " +
+//                "AND a.user.id = :userId";
+//
+//        Query query = entityManager.createQuery(jpql);
+//        query.setParameter("questionId", questionId);
+//        query.setParameter("userId", userId);
+//
+//        int updatedCount = query.executeUpdate();
+//    }
+
 
 }
