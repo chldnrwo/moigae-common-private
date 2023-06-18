@@ -153,22 +153,22 @@ public class QuestionController {
         return "redirect:/questions/questionList";
     }
 
-    @PostMapping("/symUp/{questionId}/{userId}")
-    public void symUp(
-            @PathVariable("questionId") String questionId,
-            @PathVariable("userId") String userId
-    ){
-        Answer answer = answerRepository.findByUserIdAndQuestionId(userId, questionId);
-        boolean toggle = false;
-        if(answer.isSym()){
-            toggle = false;
-        }else{
-            toggle = true;
-        }
-        answer.setSym(toggle);
-        answerRepository.save(answer);
-        QuestionWithSymCountDto qd = questionService.getQuestionWithSymCount2(questionId);
-        System.out.println(qd);
-
-    }
+//    @PostMapping("/symUp/{questionId}/{userId}")
+//    public void symUp(
+//            @PathVariable("questionId") String questionId,
+//            @PathVariable("userId") String userId
+//    ){
+//        Answer answer = answerRepository.findByUserIdAndQuestionId(userId, questionId);
+//        boolean toggle = false;
+//        if(answer.isSym()){
+//            toggle = false;
+//        }else{
+//            toggle = true;
+//        }
+//        answer.setSym(toggle);
+//        answerRepository.save(answer);
+//        QuestionWithSymCountDto qd = questionService.getQuestionWithSymCount2(questionId);
+//        System.out.println(qd);
+//
+//    }
 }

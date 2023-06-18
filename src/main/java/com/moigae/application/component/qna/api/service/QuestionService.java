@@ -101,18 +101,7 @@ public class QuestionService {
         }
     }
 
-    public QuestionWithSymCountDto getQuestionWithSymCount2(String questionId) {
-        String jpql = "SELECT new com.moigae.application.component.qna.dto.QuestionWithSymCountDto(q, COUNT(a)) " +
-                "FROM com.moigae.application.component.qna.domain.Question q " +
-                "LEFT JOIN com.moigae.application.component.qna.domain.Answer a ON a.question.id = q.id AND a.sym = true " +
-                "WHERE q.id = :questionId " +
-                "GROUP BY q";
 
-        TypedQuery<QuestionWithSymCountDto> query = entityManager.createQuery(jpql, QuestionWithSymCountDto.class);
-        query.setParameter("questionId", questionId);
-
-        return query.getSingleResult();
-    }
 
 
 //    public void getSymUp(String questionId, String userId) {
