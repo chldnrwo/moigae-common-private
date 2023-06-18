@@ -119,28 +119,6 @@
         <br>
         <div class="row">
           <div id="question-list"></div>
-          <!--<div id="question-list" th:each="question : ${questions}">
-            <hr>
-            <div th:onclick="'window.location.href=\'' + @{/questions/questionDetail/{questionId}(questionId = ${question.id})} + '\''" class="container">
-              <div style="font-weight: bold; font-size: 16px;" th:text="${#strings.abbreviate(question.questionTitle, 30)}" ></div>
-              <br>
-              <div style="font-size: 13px;" th:text="${#strings.abbreviate(question.questionContent, 30)}" ></div>
-              <div class="d-flex justify-content-between">
-                <span>
-                  <span style="color: #969696; font-size: 12px;" th:text="${question.relativeTime}"></span>
-                  <span th:text="${question.totalAnswersCount} == 0 ? '미답변' : '답변'"
-                        th:style="${question.totalAnswersCount} == 0 ? 'color: #969696; font-size: 12px' : 'color: red; font-size: 12px'"> </span>
-                </span>
-                <span class="justify-content-end" style="color: #969696; font-size: 12px;">
-                  <span>공감 </span>
-                  <span th:text="${question.sym}"></span>
-                  <span>&ensp;</span>
-                  <span>조회수 </span>
-                  <span th:text="${question.viewCount}"></span>
-                </span>
-              </div>
-            </div>
-          </div>-->
         </div>
 
         <br>
@@ -155,40 +133,7 @@
   </div>
 </div>
 <br>
-<!--<div class="container">
-  <nav aria-label="Page navigation" style="display: flex;justify-content: center;">
-    <ul class="pagination">
-      <li class="page-item">
-        <a class="page-link" th:href="${'?page=0&sort=' + sort}">&lt;&lt;</a>
-      </li>
-      <li class="page-item" th:class="${questions.first ? 'disabled' : ''}">
-        <a class="page-link" th:href="${questions.first ? '#' : ('?page=' + (startPage - 1) + '&sort=' + sort)}">&lt;</a>
-      </li>
-      <li class="page-item" th:each="pageNumber : ${#numbers.sequence(startPage, endPage - 1)}" th:class="${pageNumber == questions.number ? 'active' : ''}">
-        <a class="page-link" th:href="${'?page=' + pageNumber + '&sort=' + sort}"><span th:text="${pageNumber + 1}"></span></a>
-      </li>
-      <li class="page-item" th:class="${questions.last ? 'disabled' : ''}">
-        <a class="page-link" th:href="${questions.last ? '#' : ('?page=' + (endPage) + '&sort=' + sort)}">&gt;</a>
-      </li>
-      <li class="page-item">
-        <a class="page-link" th:href="${'?page=' + (questions.totalPages - 1) + '&sort=' + sort}">&gt;&gt;</a>
-      </li>
-    </ul>
-  </nav>
-</div>-->
 
-<!--
-<nav aria-label="Page navigation">
-  <ul class="pagination">
-    <li class="page-item">
-      <a class="page-link" href="#" id="prev-page">이전</a>
-    </li>
-    <li class="page-item">
-      <a class="page-link" href="#" id="next-page">다음</a>
-    </li>
-  </ul>
-</nav>
--->
 <div class="container">
   <nav aria-label="Page navigation" style="display: flex;justify-content: center;">
     <ul class="pagination">
@@ -220,111 +165,6 @@
         integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
         crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<!--<script>
-  $(document).ready(function() {
-    var currentPage = 0; // 현재 페이지 번호
-    var selectedSort = 'latest'; // 선택된 정렬 방식 (기본값: 최신순)
-    var totalPages = 0; // 추가: 페이지의 총 수
-
-    // 드롭다운 메뉴 클릭 시 정렬 방식 변경
-    $(".dropdown-menu a").click(function() {
-      selectedSort = $(this).attr('data-sort');
-      fetchPage(currentPage);
-    });
-
-    function fetchPage(page) {
-      $.ajax({
-        url: "/questions/sort",
-        data: { sort: selectedSort, page: page, size: 5},
-        success: function(data) {
-          // Update the page with the data received from the server
-          var html = '';
-          totalPages = data.totalPages;
-          $.each(data.content, function(i, question) {
-            // Generate HTML with question data
-            html += '<hr>';
-            html += '<div>';
-            html += '<div class="container">';
-            html += '<div style="font-weight: bold; font-size: 16px;">' + question.questionTitle + '</div>';
-            html += '<br>';
-            html += '<div style="font-size: 13px;">' + question.questionContent + '</div>';
-            html += '<div class="d-flex justify-content-between">';
-            html += '<span>';
-            html += '<span style="color: #969696; font-size: 12px;">' + question.relativeTime + '</span>';
-            html += '<span>' + (question.totalAnswersCount === 0 ? '미답변' : '답변') + '</span>';
-            html += '</span>';
-            html += '<span class="justify-content-end" style="color: #969696; font-size: 12px;">';
-            html += '<span>공감 ' + question.sym + '</span>';
-            html += '<span>&ensp;</span>';
-            html += '<span>조회수 ' + question.viewCount + '</span>';
-            html += '</span>';
-            html += '</div>';
-            html += '</div>';
-            html += '</div>';
-          });
-          // Update the page with the generated HTML
-          $('#question-list').html(html);
-
-          // 페이지네이션 바 업데이트
-          var paginationHtml = '';
-          var startPage = Math.max(0, currentPage - 2);
-          var endPage = Math.min(totalPages, startPage + 5);
-
-          // 이전 버튼
-          if (currentPage > 0) {
-            paginationHtml += '<li class="page-item prev-page"><a class="page-link" href="#">&lt;</a></li>';
-          }
-
-          // 페이지 숫자
-          for (var i = startPage; i < endPage; i++) {
-            if (i === currentPage) {
-              paginationHtml += '<li class="page-item page-number active"><a class="page-link" href="#">' + (i + 1) + '</a></li>';
-            } else {
-              paginationHtml += '<li class="page-item page-number"><a class="page-link" href="#">' + (i + 1) + '</a></li>';
-            }
-          }
-
-          // 다음 버튼
-          if (currentPage < totalPages - 1) {
-            paginationHtml += '<li class="page-item next-page"><a class="page-link" href="#">&gt;</a></li>';
-          }
-
-          $('.pagination').html(paginationHtml);
-
-          // 페이지 숫자 클릭 이벤트
-          $(".pagination .page-item.page-number").click(function(e) {
-            e.preventDefault();
-            currentPage = parseInt($(this).text()) - 1; // 현재 페이지 업데이트
-            fetchPage(currentPage);
-          });
-
-          // "이전" 버튼 클릭 시 이전 페이지로 이동
-          $(".pagination .page-item.prev-page").click(function(e) {
-            e.preventDefault();
-            if (currentPage > 0) {
-              currentPage&#45;&#45;;
-              fetchPage(currentPage);
-            }
-          });
-
-          // "다음" 버튼 클릭 시 다음 페이지로 이동
-          $(".pagination .page-item.next-page").click(function(e) {
-            e.preventDefault();
-            if (currentPage < totalPages - 1) {
-              currentPage++;
-              fetchPage(currentPage);
-            }
-          });
-
-          console.log(data);
-        }
-      });
-    }
-
-    // 초기 페이지 로드
-    fetchPage(currentPage);
-  });
-</script>-->
 <script>
   $(document).ready(function() {
     var currentPage = 0;
@@ -333,6 +173,7 @@
 
     $(".dropdown-menu a").click(function() {
       selectedSort = $(this).attr('data-sort');
+      currentPage = 0;
       fetchPage(currentPage);
     });
 
@@ -405,8 +246,8 @@
               } else if (buttonText === '>>') {
                 currentPage = totalPages - 1;
                 fetchPage(currentPage);
-              } else {
-                currentPage = index - (currentPage > 0 ? 2 : 0); // Adjust index for the addition of the '<<' button
+              } else if ($.isNumeric(buttonText)) {
+                currentPage = parseInt(buttonText) - 1;
                 fetchPage(currentPage);
               }
             });
