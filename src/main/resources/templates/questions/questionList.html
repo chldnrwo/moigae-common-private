@@ -97,9 +97,9 @@
         <br>
         <h2 style="font-weight: bold;">반려인들과 자유롭게 이야기 나누어보세요!</h2>
         <br>
-        <form class="d-flex">
+        <form id="search-form" class="d-flex">
           <button style="background-color: #d2d2d2;" class="btn btn-outline-success" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <input id="search-input" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
         </form>
         <br>
         <div class="d-flex justify-content-between">
@@ -172,17 +172,25 @@
     var selectedSort = 'latest';
     var totalPages = 0;
     var blockSize = 5; // 블록 사이즈 정의
+    var currentSearchTerm = ''; // 전역 변수로 검색어 저장
 
     $(".dropdown-menu a").click(function() {
       selectedSort = $(this).attr('data-sort');
       currentPage = 0;
-      fetchPage(currentPage);
+      fetchPage(currentPage, currentSearchTerm);
     });
 
-    function fetchPage(page) {
+    $("#search-form").submit(function(e) {
+      e.preventDefault();
+      currentSearchTerm = $("#search-input").val();
+      currentPage = 0;
+      fetchPage(currentPage, currentSearchTerm);
+    });
+
+    function fetchPage(page, searchTerm = '') {
       $.ajax({
         url: "/questions/sort",
-        data: { sort: selectedSort, page: page, size: 5 },
+        data: { sort: selectedSort, page: page, size: 5, searchTerm: searchTerm },
         success: function(data) {
           var html = '';
           totalPages = data.totalPages;
@@ -243,20 +251,16 @@
               var buttonText = $(this).children().first().text();
               if (buttonText === '<<') {
                 currentPage = 0;
-                fetchPage(currentPage);
               } else if (buttonText === '<') {
                 currentPage = Math.max(0, currentPage - blockSize);
-                fetchPage(currentPage);
               } else if (buttonText === '>') {
                 currentPage = Math.min(totalPages - 1, currentPage + blockSize);
-                fetchPage(currentPage);
               } else if (buttonText === '>>') {
                 currentPage = totalPages - 1;
-                fetchPage(currentPage);
               } else if ($.isNumeric(buttonText)) {
                 currentPage = parseInt(buttonText) - 1;
-                fetchPage(currentPage);
               }
+              fetchPage(currentPage, currentSearchTerm);
             });
           });
         }
