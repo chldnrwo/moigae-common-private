@@ -95,8 +95,13 @@
 
       <div class="col-md-10">
         <div th:text="${question.questionTitle}" style="font-weight: bold;font-size: 20px;"></div>
-
-        <br><hr style="border-width: 4px; border-color: #969696;"><br>
+        <div style="margin-top: 10px;font-size: 12px;color: #969696;">
+          <div><span>작성일 : </span> <span th:text="${#temporals.format(question.createTime, 'yyyy-MM-dd')}"></span> </div>
+          <div><span>작성자 : </span> <span th:text="${user.email}"></span> </div>
+          <div><span>조회수 : </span> <span th:text="${question.viewCount}"></span> </div>
+          <div><span>공감 : </span> <span th:text="${question.sym}"></span> </div>
+        </div>
+        <hr style="border-width: 4px; border-color: #969696;"><br>
 
         <div th:utext="${question.questionContent}"></div>
 

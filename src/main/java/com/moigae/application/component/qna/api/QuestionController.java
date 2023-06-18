@@ -36,6 +36,7 @@ public class QuestionController {
     private final FileService fileService;
     private final QuestionService questionService;
     private final UserRepository userRepository;
+
     @GetMapping("/createQuestion")
     public String createQuestion(Model model,
                                 @AuthenticationPrincipal CustomUser customUser) {
@@ -97,13 +98,18 @@ public class QuestionController {
             @AuthenticationPrincipal CustomUser customUser,
             @PathVariable("id") String questionId,
             Model model) {
-        Question question = questionRepository.findById(questionId)
+        Question question2 = questionRepository.findById(questionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId));
-        question.setViewCount(question.getViewCount()+1);
-        questionRepository.save(question);
+        question2.setViewCount(question2.getViewCount()+1);
+        questionRepository.save(question2);
+
+        QuestionWithSymCountDto question = questionService.getQuestionWithSymCount(questionId);
+        User user = userRepository.findById(question.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + question.getUserId()));
+
         model.addAttribute("customUser", customUser);
         model.addAttribute("question", question);
-
+        model.addAttribute("user", user);
         return "questions/questionDetail";
     }
 
