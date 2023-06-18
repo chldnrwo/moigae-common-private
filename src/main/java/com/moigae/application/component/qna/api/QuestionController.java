@@ -12,6 +12,7 @@ import com.moigae.application.component.qna.repository.QuestionRepository;
 import com.moigae.application.component.user.domain.User;
 import com.moigae.application.component.user.dto.CustomUser;
 import com.moigae.application.component.user.repository.UserRepository;
+import com.moigae.application.core.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -23,6 +24,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/questions")
@@ -89,5 +92,55 @@ public class QuestionController {
         return ResponseEntity.ok(questions);
     }
 
+    @GetMapping("/questionDetail/{id}")
+    public String getQuestionDetail(
+            @AuthenticationPrincipal CustomUser customUser,
+            @PathVariable("id") String questionId,
+            Model model) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId));
+        question.setViewCount(question.getViewCount()+1);
+        questionRepository.save(question);
+        model.addAttribute("customUser", customUser);
+        model.addAttribute("question", question);
 
+        return "questions/questionDetail";
+    }
+
+    @DeleteMapping("/delete/{questionId}")
+    public ResponseEntity<?> deleteQuestion(@PathVariable String questionId) {
+        questionRepository.deleteById(questionId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/update/{questionId}")
+    public String updateQuestion(
+            Model model,
+            @AuthenticationPrincipal CustomUser customUser,
+            @PathVariable String questionId) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId));
+        model.addAttribute("articleForm", new ArticleForm());
+        model.addAttribute("customUser", customUser);
+        model.addAttribute("question", question);
+
+        return "questions/updateQuestion";
+    }
+
+    @PostMapping("/updateQuestion/{questionId}")
+    public String updateQuestion(
+            @PathVariable("questionId") String questionId,
+            @ModelAttribute ArticleForm articleForm
+    ) {
+        Optional<Question> optionalQuestion = questionRepository.findById(questionId);
+        if (optionalQuestion.isPresent()) {
+            Question question = optionalQuestion.get();
+            question.setQuestionTitle(articleForm.getArticleTitle());
+            question.setQuestionContent(articleForm.getContent());
+
+            System.out.println(question);
+            questionRepository.save(question);
+        }
+        return "redirect:/questions/questionList";
+    }
 }
