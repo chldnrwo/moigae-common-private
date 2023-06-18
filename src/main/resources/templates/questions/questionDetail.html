@@ -114,8 +114,19 @@
           </div>
         </div>
         <br><hr style="border-width: 4px; border-color: #969696;"><br>
-
+        <div id="answer-list"></div>
+        <br><br>
+        <div>
+            <div style="margin-bottom: 10px;font-weight: bold;font-size: 20px;">답변</div>
+            <textarea class="form-control" id="answerContent" rows="3"
+            placeholder="-서로 존중하며 예의를 갖추어 질문해요.
+-거친 폭언이나 욕설은 하지 말아주세요"></textarea>
+            <div class="d-flex justify-content-end">
+              <button id="answerSubmit" style="margin-top: 10px;" class="btn btn-warning">답변 등록</button>
+            </div>
+        </div>
         <div class="text-end" style="font-size: 15px;color: #969696;">
+          <br>
           <span>작성일 : </span>
           <span th:text="${#temporals.format(question.createTime, 'yyyy-MM-dd')}"></span>
           <br>
@@ -131,6 +142,7 @@
         <div class="d-flex justify-content-center">
           <button class="btn btn-secondary px-5" onclick="history.back()">목록으로 돌아가기</button>
         </div>
+        <br><br>
       </div>
     </div>
   </div>
@@ -196,6 +208,83 @@
       }
     });
   });
+
+  $("#answerSubmit").click(function() {
+    // AJAX 요청을 서버에 보냅니다.
+    var answerContent = $("#answerContent").val();
+    $.ajax({
+      url: '/questions/addAnswer/' + questionId + '/' + userId,  // symUp 엔드포인트에 요청을 보냅니다.
+      type: 'POST', // 서버에 요청을 보내는 방식을 POST로 지정합니다.
+      data: {
+        answerContent: answerContent  // textarea에서 가져온 값을 서버로 보냅니다.
+      },
+      success: function(response) {
+        if (response.status === "success") {
+          console.log("success");
+          location.reload();
+        }
+      },
+      error: function(error) {
+        console.log(error);
+      }
+    });
+  });
+
+  $.ajax({
+    url: '/questions/getAnswers/' + questionId,
+    type: 'GET',
+    success: function(response) {
+      // 각각의 댓글에 대해
+      response.forEach(function(answerDtos) {
+        // HTML을 생성합니다.
+        var date = new Date(answerDtos.createTime);  // JavaScript의 Date 객체를 생성합니다.
+        var year = date.getFullYear();  // 년도를 가져옵니다.
+        var month = date.getMonth() + 1;  // 월을 가져옵니다. JavaScript의 getMonth() 메서드는 0부터 11까지의 값을 반환하므로, 1을 더해야 합니다.
+        var day = date.getDate();  // 일을 가져옵니다.
+
+        if (month < 10) month = '0' + month;  // 월이 한 자리 수인 경우 앞에 0을 붙입니다.
+        if (day < 10) day = '0' + day;  // 일이 한 자리 수인 경우 앞에 0을 붙입니다.
+
+        var formattedDate = year + '-' + month + '-' + day;  // 연월일을 결합하여 날짜 포맷을 완성합니다.
+        var answerHtml = `
+        <div class="container">
+          <div style="margin-bottom: 10px; font-size: 20px;font-weight: bold;">답변</div>
+          <div>${answerDtos.answerContent}</div>
+          <br>
+          <div class="d-flex justify-content-between">
+            <span style="font-size: 12px;">
+              <div>
+                <span>작성일 : </span>
+                <span>${formattedDate}</span>
+              </div>
+              <div>
+                <span>작성자 : </span>
+                <span>${answerDtos.email}</span>
+              </div>
+            </span>
+            <span style="font-weight: bold;" class="justify-content-end">
+              <span>
+                <button class="btn btn-warning">&emsp;수정&emsp;</button>
+              </span>
+              <span>&ensp;</span>
+              <span>
+                <button class="btn btn-danger">&emsp;삭제&emsp;</button>
+              </span>
+            </span>
+          </div>
+          <hr>
+        </div>
+      `;
+
+        // HTML을 페이지에 추가합니다.
+        $("#answer-list").append(answerHtml);
+      });
+    },
+    error: function(error) {
+      console.log(error);
+    }
+  });
+
 </script>
 </body>
 </html>

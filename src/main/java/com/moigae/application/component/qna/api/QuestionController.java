@@ -9,6 +9,7 @@ import com.moigae.application.component.qna.api.service.QuestionService;
 import com.moigae.application.component.qna.domain.Answer;
 import com.moigae.application.component.qna.domain.Question;
 import com.moigae.application.component.qna.domain.Sym;
+import com.moigae.application.component.qna.dto.AnswerDto;
 import com.moigae.application.component.qna.dto.QuestionWithSymCountDto;
 import com.moigae.application.component.qna.repository.AnswerRepository;
 import com.moigae.application.component.qna.repository.QuestionRepository;
@@ -33,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/questions")
@@ -194,5 +196,44 @@ public class QuestionController {
         response.put("newSymValue", symLen);
         return response;
 
+    }
+    @PostMapping("/addAnswer/{questionId}/{userId}")
+    @ResponseBody
+    public Map<String, String> addAnswer(
+            @PathVariable("questionId") String questionId,
+            @PathVariable("userId") String userId,
+            @RequestParam("answerContent") String answerContent
+    ){
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new ResourceNotFoundException("User not found with id " + userId));
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId));
+
+        Answer answer = new Answer(question, user, answerContent, false);
+        answerRepository.save(answer);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "success");
+
+        return response;
+    }
+
+    @GetMapping("/getAnswers/{questionId}")
+    @ResponseBody
+    public List<AnswerDto> getAnswers(@PathVariable("questionId") String questionId) {
+        // questionId에 해당하는 댓글을 가져와 AnswerDto에 담아서 반환합니다.
+        List<Answer> answers = answerRepository.findAnswersByQuestionIdSortedByCreatedAtDesc(questionId);
+        List<AnswerDto> answerDtos = answers.stream()
+                .map(answer -> new AnswerDto(
+                        answer.getId(),
+                        answer.getQuestion().getId(),
+                        answer.getUser().getEmail(),
+                        answer.getAnswerContent(),
+                        answer.getCreateTime()
+                ))
+                .collect(Collectors.toList());
+
+        return answerDtos;
     }
 }
