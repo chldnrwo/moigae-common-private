@@ -67,41 +67,28 @@ public class QuestionController {
         questionRepository.save(question);
         return "redirect:/questions/questionList";
     }
-    //
-    //          Question    question
+
 
     public String getQuestionList(Model model,
                                            @AuthenticationPrincipal CustomUser customUser,
                                            @PageableDefault(size = 10) Pageable pageable,
                                            String viewName) {
-
-
-        //Page<QuestionWithSymCountDto> questions
-        //       = questionService.getQuestionsWithSymCount(pageable);
-        //Page<Question> questions = questionRepository.findAll(pageable);
-
-        // Calculate the page group
-        //int startPage = (pageable.getPageNumber() / 10) * 10;
-        //int endPage = Math.min(startPage + 10, questions.getTotalPages());
-
         model.addAttribute("customUser", customUser);
-        //model.addAttribute("questions", questions);
-        //model.addAttribute("startPage", startPage);
-        //model.addAttribute("endPage", endPage);
-
+        System.out.println("imused11111");
         return viewName;
     }
     @GetMapping("/questionList")
     public String articleList(Model model,
                               @AuthenticationPrincipal CustomUser customUser,
                               @PageableDefault(size = 6) Pageable pageable) {
+        System.out.println("imused2222");
         return getQuestionList(model, customUser, pageable, "questions/questionList");
     }
 
     @GetMapping("/sort")
     public ResponseEntity<Page<QuestionWithSymCountDto>> sortQuestions(@RequestParam String sort, @RequestParam(required = false) String searchTerm, Pageable pageable) {
         Page<QuestionWithSymCountDto> questions = questionService.getQuestionsWithSymCount(pageable, sort, searchTerm);
-
+        System.out.println("imused33333");
         return ResponseEntity.ok(questions);
     }
 
@@ -259,4 +246,12 @@ public class QuestionController {
 
         return response;
     }
+
+//    public String getMyQuestionList(Model model,
+//                                  @AuthenticationPrincipal CustomUser customUser,
+//                                  @PageableDefault(size = 10) Pageable pageable,
+//                                  String viewName) {
+//        model.addAttribute("customUser", customUser);
+//        return viewName;
+//    }
 }
