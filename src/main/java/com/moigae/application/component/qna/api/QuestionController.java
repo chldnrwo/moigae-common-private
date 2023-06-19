@@ -26,10 +26,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -235,5 +237,32 @@ public class QuestionController {
                 .collect(Collectors.toList());
 
         return answerDtos;
+    }
+
+    @DeleteMapping("/deleteAnswer/{answerId}")
+    @ResponseBody
+    public Map<String, String> deleteAnswer(@PathVariable String answerId) {
+        answerRepository.deleteById(answerId);
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "success");
+
+        return response;
+    }
+
+    @PostMapping("/editAnswer/{id}")
+    @ResponseBody
+    @Transactional
+    public Map<String, String> editAnswer(
+            @PathVariable String id,
+            @RequestParam String answerContent
+    ){
+        Answer answer = answerRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Answer not found with id " + id));
+        answer.setAnswerContent(answerContent);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "success");
+
+        return response;
     }
 }
