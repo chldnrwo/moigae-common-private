@@ -106,7 +106,7 @@
         <div th:utext="${question.questionContent}"></div>
         <br>
         <div class="d-flex justify-content-center">
-          <div class="btn btn-primary">
+          <div id="sympathy" class="btn btn-primary">
             <span>공감 </span>
             <span><i class="fa-regular fa-thumbs-up"></i></span>
             <span> </span>
@@ -194,7 +194,7 @@
   let userId = '[[${customUser.id}]]';
   let questionId = '[[${question.id}]]';
 
-  $(".btn.btn-primary").click(function() {
+  $("#sympathy").click(function() {
     // AJAX 요청을 서버에 보냅니다.
     $.ajax({
       url: '/questions/symUp/' + questionId + '/' + userId,  // symUp 엔드포인트에 요청을 보냅니다.
@@ -202,6 +202,8 @@
       success: function(response) {  // 서버로부터 성공적인 응답을 받았을 때의 동작을 정의합니다.
         // 응답으로부터 반환된 값으로 'sym' 요소의 텍스트를 업데이트합니다.
         $("#sym").text(response.newSymValue);
+        console.log("sym success");
+        console.log(response.newSymValue);
       },
       error: function(error) {  // 요청이 실패했을 때의 동작을 정의합니다.
         console.log(error);

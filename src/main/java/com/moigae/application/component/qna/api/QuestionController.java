@@ -164,13 +164,14 @@ public class QuestionController {
 
     @PostMapping("/symUp/{questionId}/{userId}")
     @ResponseBody
+    @Transactional
     public Map<String, Long> symUp(
             @PathVariable("questionId") String questionId,
             @PathVariable("userId") String userId
     ){
 
         User user = userRepository.findById(userId)
-                .orElseThrow(()->new ResourceNotFoundException("User not found with id " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId));
 
@@ -178,16 +179,9 @@ public class QuestionController {
         boolean toggle = false;
         if (sym == null) {
             sym = new Sym(question, user, true);
-        }else{
-            if(sym.isSym()){
-                toggle = false;
-            }else{
-                toggle = true;
-            }
+        } else {
+            toggle = !sym.isSym();
             sym.setSym(toggle);
-            sym.setQuestion(question);
-            sym.setUser(user);
-
         }
         symRepository.save(sym);
 
@@ -197,8 +191,8 @@ public class QuestionController {
         Map<String, Long> response = new HashMap<>();
         response.put("newSymValue", symLen);
         return response;
-
     }
+
     @PostMapping("/addAnswer/{questionId}/{userId}")
     @ResponseBody
     public Map<String, String> addAnswer(
