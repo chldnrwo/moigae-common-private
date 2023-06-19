@@ -161,6 +161,52 @@ public class QuestionService {
 //
 //        int updatedCount = query.executeUpdate();
 //    }
+        public Page<QuestionWithSymCountDto> getQuestionsWithSymCount2(Pageable pageable, String sort, String searchTerm, String currentId) {
+            String jpql = "SELECT new com.moigae.application.component.qna.dto.QuestionWithSymCountDto(q, COUNT(CASE WHEN s.sym = true THEN 1 ELSE null END)) " +
+                    "FROM com.moigae.application.component.qna.domain.Question q " +
+                    "LEFT JOIN com.moigae.application.component.qna.domain.Sym s ON s.question.id = q.id " +
+                    "WHERE (q.questionTitle LIKE :searchTerm OR q.questionContent LIKE :searchTerm) " +
+                    "AND q.user.id = :currentId " +
+                    "GROUP BY q";
+
+
+            if ("views".equals(sort)) {
+                jpql += " ORDER BY q.viewCount DESC";
+            } else {
+                jpql += " ORDER BY q.createTime DESC";
+            }
+
+            return getQuestionWithSymCountDtos2(pageable, jpql, searchTerm, currentId);
+        }
+
+    private Page<QuestionWithSymCountDto> getQuestionWithSymCountDtos2(Pageable pageable, String jpql, String searchTerm, String currentId) {
+        String countJpql = "SELECT COUNT(q) FROM com.moigae.application.component.qna.domain.Question q " +
+                "WHERE (q.questionTitle LIKE :searchTerm OR q.questionContent LIKE :searchTerm) " +
+                "AND q.user.id = :currentId";
+
+        TypedQuery<QuestionWithSymCountDto> query = entityManager.createQuery(jpql, QuestionWithSymCountDto.class);
+        TypedQuery<Long> countQuery = entityManager.createQuery(countJpql, Long.class);
+        query.setParameter("searchTerm", "%" + searchTerm + "%");
+        query.setParameter("currentId", currentId);
+        countQuery.setParameter("searchTerm", "%" + searchTerm + "%");
+        countQuery.setParameter("currentId", currentId);
+
+        // 페이지에 해당하는 데이터만 가져옴
+        query.setFirstResult((int) pageable.getOffset());
+        query.setMaxResults(pageable.getPageSize());
+
+        List<QuestionWithSymCountDto> content = query.getResultList();
+        Long total = countQuery.getSingleResult();
+
+        for (QuestionWithSymCountDto qd : content) {
+            Document document = Jsoup.parse(qd.getQuestionContent());
+            String parseContent = document.text();
+            qd.setQuestionContent(parseContent);
+            qd.setRelativeTime(getRelativeTime(qd.getCreateTime()));
+        }
+
+        return new PageImpl<>(content, pageable, total);
+    }
 
 
 }
