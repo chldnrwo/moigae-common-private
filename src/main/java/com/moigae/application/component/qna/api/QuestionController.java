@@ -273,4 +273,30 @@ public class QuestionController {
 
         return ResponseEntity.ok(questions);
     }
+
+    public String getMyAnswerList(Model model,
+                                    @AuthenticationPrincipal CustomUser customUser,
+                                    @PageableDefault(size = 10) Pageable pageable,
+                                    String viewName) {
+        model.addAttribute("customUser", customUser);
+        return viewName;
+    }
+    @GetMapping("/myAnswerList")
+    public String myAnswerList(Model model,
+                                 @AuthenticationPrincipal CustomUser customUser,
+                                 @PageableDefault(size = 6) Pageable pageable) {
+
+        return getMyAnswerList(model, customUser, pageable, "questions/myAnswerList");
+    }
+    @GetMapping("/sortMyA")
+    public ResponseEntity<Page<QuestionWithSymCountDto>> sortMyAnswers(
+            @RequestParam String sort,
+            @RequestParam(required = false) String searchTerm,
+            Pageable pageable,
+            @AuthenticationPrincipal CustomUser customUser
+    ) {
+        Page<QuestionWithSymCountDto> questions = questionService.getQuestionsWithSymCount3(pageable, sort, searchTerm, customUser.getId());
+
+        return ResponseEntity.ok(questions);
+    }
 }

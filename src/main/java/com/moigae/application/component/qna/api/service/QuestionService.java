@@ -208,5 +208,61 @@ public class QuestionService {
         return new PageImpl<>(content, pageable, total);
     }
 
+    public Page<QuestionWithSymCountDto> getQuestionsWithSymCount3(Pageable pageable, String sort, String searchTerm, String currentId) {
+        String baseJpql = "SELECT new com.moigae.application.component.qna.dto.QuestionWithSymCountDto(q, " +
+                "(SELECT COUNT(s) FROM com.moigae.application.component.qna.domain.Sym s WHERE s.question.id = q.id AND s.sym = true)) " +
+                "FROM com.moigae.application.component.qna.domain.Question q " +
+                "WHERE q.id IN (SELECT a.question.id FROM com.moigae.application.component.qna.domain.Answer a WHERE a.user.id = :currentId)";
+
+        String searchJpql = "";
+        if(searchTerm != null && !searchTerm.isEmpty()) {
+            searchJpql = " AND (q.questionTitle LIKE :searchTerm OR q.questionContent LIKE :searchTerm)";
+        }
+
+        String orderJpql = "";
+        if ("views".equals(sort)) {
+            orderJpql = " ORDER BY q.viewCount DESC";
+        } else {
+            orderJpql = " ORDER BY q.createTime DESC";
+        }
+
+        return getQuestionWithSymCountDtos3(pageable, baseJpql + searchJpql + orderJpql, searchTerm, currentId);
+    }
+
+    private Page<QuestionWithSymCountDto> getQuestionWithSymCountDtos3(Pageable pageable, String jpql, String searchTerm, String currentId) {
+        String countJpql = "SELECT COUNT(q) FROM com.moigae.application.component.qna.domain.Question q WHERE q.id IN (SELECT a.question.id FROM com.moigae.application.component.qna.domain.Answer a WHERE a.user.id = :currentId)";
+
+        if(searchTerm != null && !searchTerm.isEmpty()) {
+            countJpql += " AND (q.questionTitle LIKE :searchTerm OR q.questionContent LIKE :searchTerm)";
+        }
+
+        TypedQuery<QuestionWithSymCountDto> query = entityManager.createQuery(jpql, QuestionWithSymCountDto.class);
+        TypedQuery<Long> countQuery = entityManager.createQuery(countJpql, Long.class);
+
+        if(searchTerm != null && !searchTerm.isEmpty()) {
+            query.setParameter("searchTerm", "%" + searchTerm + "%");
+            countQuery.setParameter("searchTerm", "%" + searchTerm + "%");
+        }
+
+        query.setParameter("currentId", currentId);
+        countQuery.setParameter("currentId", currentId);
+
+        // 페이지에 해당하는 데이터만 가져옴
+        query.setFirstResult((int) pageable.getOffset());
+        query.setMaxResults(pageable.getPageSize());
+
+        List<QuestionWithSymCountDto> content = query.getResultList();
+        Long total = countQuery.getSingleResult();
+
+        for (QuestionWithSymCountDto qd : content) {
+            Document document = Jsoup.parse(qd.getQuestionContent());
+            String parseContent = document.text();
+            qd.setQuestionContent(parseContent);
+            qd.setRelativeTime(getRelativeTime(qd.getCreateTime()));
+        }
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
 
 }
