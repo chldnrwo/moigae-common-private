@@ -136,8 +136,18 @@
               </script>
             </div>
             <br>
-            <div class="d-flex justify-content-end">
-              <button class="btn btn-secondary">작성 완료</button>
+            <div class="d-flex justify-content-between">
+              <div>
+                <button class="btn btn-primary" type="button">AI mode</button>
+              </div>
+              <div class="d-flex justify-content-end">
+                <button class="btn btn-secondary" type="submit">작성 완료</button>
+              </div>
+            </div>
+            <br>
+            <div class="input-group" style="display:none;">
+              <input id="submitGpt" class="form-control" placeholder="주제를 입력해주세요.">
+              <button id="emailExistButton1" type="button" class="btn btn-outline-secondary">제출</button>
             </div>
           </div>
         </form>
