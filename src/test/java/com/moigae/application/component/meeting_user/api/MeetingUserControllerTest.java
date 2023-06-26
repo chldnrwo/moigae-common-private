@@ -49,7 +49,7 @@ class MeetingUserControllerTest {
         //when & then
         mockMvc.perform(multipart("/host-center/meetings/create").file(file)
                         .flashAttr("meetingCreateRequest", meetingCreateRequest))
-                .andExpect(status().isOk())
+                .andExpect(status().is3xxRedirection())
                 .andExpect(authenticated());
     }
 }
