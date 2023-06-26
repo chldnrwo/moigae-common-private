@@ -53,15 +53,9 @@ public class MypageController {
     public String myPageMoim(Model model, @AuthenticationPrincipal CustomUser customUser) {
         String id = customUser.getId();
         List<MeetingPayment> meetingPayments = meetingPaymentService.fetchMeetingPaymentsByUserId(id);
-        MeetingPayment meetingPayment = meetingPaymentService.fetchMeetingPaymentByUserId(id);
-        Meeting meeting = meetingPayment.getMeeting();
-        Long paidAmount = meetingPayment.getPaidAmount();
 
         model.addAttribute("customUser", customUser);
         model.addAttribute("meetingPayments", meetingPayments);
-        model.addAttribute("meetingPayment", meetingPayment);
-        model.addAttribute("meeting", meeting);
-        model.addAttribute("paidAmount", paidAmount);
         return "users/mypageMoim";
     }
 
