@@ -96,15 +96,15 @@
     <div class="container-md" style="margin-top: 70px; padding: 0">
         <h2 class="text-center" style="margin-top: 0; margin-bottom: 30px">모임내역</h2>
         <script>
-        function handleFormSubmit() {
-             document.getElementById("hostCenterForm").submit();
-             }
+            function handleFormSubmit() {
+                document.getElementById("hostCenterForm").submit();
+            }
         </script>
-<div class="justify-content-center container col-md-10" style="margin-bottom: 100px">
-    <form id="hostCenterForm" th:action="@{/host-center/board}"
-          method="post" th:object="${accountDto}" enctype="multipart/form-data">
+        <div class="justify-content-center container col-md-10" style="margin-bottom: 100px">
+            <form id="hostCenterForm" th:action="@{/host-center/board}"
+                  method="post" th:object="${accountDto}" enctype="multipart/form-data">
 
-            <!-- 게시물 목록 -->
+                <!-- 게시물 목록 -->
                 <div class="card-body" style="margin-bottom: 20px">
                     <ul class="list-group" th:each="BankAccountDto : ${boardList}">
                         <li class="list-group-item" style="margin-bottom: 20px">
@@ -113,20 +113,40 @@
                             <p th:text="${BankAccountDto.date}" style="margin: 0"></p>
                             <p th:text="${BankAccountDto.price}" style="margin: 0"></p>
                             <p th:text="${BankAccountDto.participantRange.getMaxParticipants()}" style="margin: 0"></p>
-                            <p th:text="${BankAccountDto.meetingStatus.getValue()}" readonly ></p>
-                            <a th:href="@{/host-center/meetings/{meetingId}/info/userNow(meetingId=${BankAccountDto.id})}" class="btn btn-primary btn-sm">신청자 현황</a>
-                            <a th:href="@{/host-center/meetings/{meetingId}/edit(meetingId=${BankAccountDto.id})}" class="btn btn-outline-success btn-sm">모임 수정</a>
-                            <form th:action="@{/host-center/meetings/{meetingId}/cancel(meetingId=${BankAccountDto.id})}" method="get" style="display: inline;">
-                                <button id="cancelButton" class="btn btn-outline-danger btn-sm" type="submit" onclick="return confirm('정말로 모임을 취소하시겠습니까?')">모집 취소</button>
+                            <p th:text="${BankAccountDto.meetingStatus.getValue()}" readonly></p>
+                            <a th:href="@{/host-center/meetings/{meetingId}/info/userNow(meetingId=${BankAccountDto.id})}"
+                               class="btn btn-primary btn-sm">신청자 현황</a>
+
+                            <button class="btn btn-outline-success btn-sm"
+                                    data-meeting-id="${BankAccountDto.id}" onclick="updateMeeting(this)">모임 수정
+                            </button>
+
+
+                            <form th:action="@{/host-center/meetings/{meetingId}/cancel(meetingId=${BankAccountDto.id})}"
+                                  method="get" style="display: inline;">
+                                <button id="cancelButton" class="btn btn-outline-danger btn-sm" type="submit"
+                                        onclick="return confirm('정말로 모임을 취소하시겠습니까?')">모집 취소
+                                </button>
                             </form>
                         </li>
                     </ul>
                 </div>
             </form>
-</div>
+        </div>
     </div>
 </div>
 <script>
+
+    function updateMeeting(button) {
+        var meetingId = button.getAttribute("data-meeting-id");
+
+        // GET 요청을 통해 페이지 이동
+        setTimeout(function() {
+            // GET 요청을 통해 페이지 이동
+            window.location.href = "/host-center/meetings/edit/" + meetingId;
+        }, 10000);
+
+
     // Save the readonly state of form inputs to local storage
     function saveReadonlyState() {
         var bankNameInput = document.getElementById("bankName");
@@ -160,6 +180,7 @@
             saveButton.disabled = true;
         }
     }
+
     // Call the loadReadonlyState function during page load
     window.addEventListener("load", loadReadonlyState);
 </script>
