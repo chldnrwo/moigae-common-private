@@ -40,7 +40,7 @@ public class MeetingUserController {
                                 @AuthenticationPrincipal CustomUser customUser) {
         Meeting meeting = meetingUserService.meetingUserCreate(customUser, meetingCreateRequest);
         meetingImageService.create(path, meeting);
-        return "meetings/meeting_create";
+        return "redirect:/host/hostCenterMain";
     }
 
     //정산 내역 리스트

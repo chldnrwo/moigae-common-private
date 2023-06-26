@@ -54,18 +54,8 @@ public class MypageController {
         String id = customUser.getId();
         List<MeetingPayment> meetingPayments = meetingPaymentService.fetchMeetingPaymentsByUserId(id);
         MeetingPayment meetingPayment = meetingPaymentService.fetchMeetingPaymentByUserId(id);
-
-        if (meetingPayment == null) {
-            System.out.println("imnull");
-            model.addAttribute("isMeetingPaymentNull", true);
-        } else {
-            Meeting meeting = meetingPayment.getMeeting();
-            Long paidAmount = meetingPayment.getPaidAmount();
-
-            model.addAttribute("meetingPayment", meetingPayment);
-            model.addAttribute("meeting", meeting);
-            model.addAttribute("paidAmount", paidAmount);
-        }
+        Meeting meeting = meetingPayment.getMeeting();
+        Long paidAmount = meetingPayment.getPaidAmount();
 
         model.addAttribute("customUser", customUser);
         model.addAttribute("meetingPayments", meetingPayments);
@@ -74,10 +64,6 @@ public class MypageController {
         model.addAttribute("paidAmount", paidAmount);
         return "users/mypageMoim";
     }
-
-
-
-
 
     @GetMapping("/mypageCart")
     public String myPageCart(Model model, @AuthenticationPrincipal CustomUser customUser) {
