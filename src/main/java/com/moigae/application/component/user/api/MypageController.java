@@ -1,6 +1,7 @@
 package com.moigae.application.component.user.api;
 
 import com.moigae.application.component.meeting.application.MeetingPaymentCustomService;
+import com.moigae.application.component.meeting.domain.Meeting;
 import com.moigae.application.component.meeting.repository.MeetingSymRepository;
 import com.moigae.application.component.meeting_payment.domain.MeetingPayment;
 import com.moigae.application.component.qna.api.service.QuestionService;
@@ -57,7 +58,6 @@ public class MypageController {
         model.addAttribute("meetingPayments", meetingPayments);
         return "users/mypageMoim";
     }
-
 
     @GetMapping("/mypageCart")
     public String myPageCart(Model model, @AuthenticationPrincipal CustomUser customUser) {

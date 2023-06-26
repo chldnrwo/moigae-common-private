@@ -69,7 +69,7 @@ public class MeetingController {
                 sym = true;
             }
         }
-
+      
         if (meetingDto.getPrice() > 0) {
             model.addAttribute("meetingDto", meetingDto);
             model.addAttribute("customUser", customUser);
