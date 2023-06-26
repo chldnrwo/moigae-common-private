@@ -3,15 +3,17 @@ package com.moigae.application.component.meeting_user.api;
 import com.moigae.application.component.meeting.application.MeetingService;
 import com.moigae.application.component.meeting.domain.Meeting;
 import com.moigae.application.component.meeting.domain.enumeraion.MeetingStatus;
+import com.moigae.application.component.meeting.dto.MeetingDto;
 import com.moigae.application.component.meeting.repository.MeetingRepository;
 import com.moigae.application.component.meeting_user.api.request.MeetingUpdateRequest;
 import com.moigae.application.component.meeting_user.application.MeetingUserService;
+import com.moigae.application.component.meeting_user.util.Converter;
 import com.moigae.application.component.user.application.CustomMeetingService;
 import com.moigae.application.component.user.dto.CustomUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,11 +50,17 @@ public class MeetingUpdateController {
 //        return "host/hostCenterMain";
 //    }
 
-    @GetMapping("/meetings/edit/{meetingId}")
-    public String updateMeeting(@PathVariable("meetingId") String meetingId,
-                                @AuthenticationPrincipal CustomUser customUser) {
+    @GetMapping("/meetings/{meetingId}/edit")
+    public String getUpdateRequestInfo(@PathVariable("meetingId") String meetingId, Model model) {
+        MeetingDto meetingDto = meetingService.meetingFindByUUID(meetingId);
+        Meeting meeting = Converter.toMeeting(meetingDto);
+        MeetingUpdateRequest updateRequest = Converter.toUpdateRequest(meeting);
+        model.addAttribute("meetingUpdateRequest", updateRequest);
+        model.addAttribute("customUser", customUser);
         return "host/meeting_edit";
+
     }
+
 
     //모임취소
     @GetMapping("/meetings/{meetingId}/cancel")
