@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html xmlns:th="http://www.thymeleaf.org"
+>
 <head>
     <style>
         @keyframes down {
@@ -11,6 +12,7 @@
                 transform: translateY(0px)
             }
         }
+
         @font-face {
             font-family: 'NanumSquareNeo-Variable';
             src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/NanumSquareNeo-Variable.woff2') format('woff2');
@@ -28,20 +30,28 @@
             object-fit: cover;
             object-position: center;
         }
-         .carousel-item img {
-             max-width: 100%;
-             height: auto;
-         }
+
+        .carousel-item img {
+            max-width: 100%;
+            height: auto;
+        }
     </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>모이개(MOIGAE)</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
-          crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+            crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
           integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
-          crossorigin="anonymous" referrerpolicy="no-referrer" />
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+            crossorigin="anonymous"></script>
 </head>
 <body>
 <div>
@@ -51,57 +61,118 @@
     <br><br>
     <!--  컨텐츠 시작-->
     <div class="container-md">
-    <!--컨텐츠 시작-->
-    <!--검색창
-    페이지의 모임 제목을 검색할 수 있다-->
-    <div class="d-flex justify-content-center mt-5" style="margin: 0">
-        <div class="input-group" style="width: 550px;margin-top: 60px; margin-bottom: 10px">
-            <input type="text" class="form-control" style="border-color: #f0f0f0" placeholder="모임을 검색하세요"
-                   aria-label="Search" id="searchInput">
-            <button type="button" class="btn btn-primary" id="searchButton"
-                    style="background-color:#f0f0f0; font-weight: bolder; color:#000000; border-color:#f0f0f0; width: 50px; height: 40px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-                     class="bi bi-search" viewBox="0 0 16 16">
-                    <path
-                            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                </svg>
-            </button>
-        </div>
-    </div>
-    <!--배너이며 기능은 없음-->
-    <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
-        <!-- 캐러셀 인디케이터 -->
-        <ol class="carousel-indicators">
-            <li style="background-color: #5c636a; width: 8px" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active"></li>
-            <li style="background-color: #5c636a; width: 8px" data-bs-target="#myCarousel" data-bs-slide-to="1"></li>
-            <li style="background-color: #5c636a; width: 8px" data-bs-target="#myCarousel" data-bs-slide-to="2"></li>
-        </ol>
-        <!-- 캐러셀 슬라이더 내용 -->
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img src="/images/banner.png" alt="이미지 1">
-            </div>
-            <div class="carousel-item">
-                <img src="/images/banner_2.png" alt="이미지 2">
-            </div>
-            <div class="carousel-item">
-                <img src="/images/banner_3.png" alt="이미지 3">
+        <!--컨텐츠 시작-->
+        <!--검색창
+        페이지의 모임 제목을 검색할 수 있다-->
+        <div class="d-flex justify-content-center mt-5" style="margin: 0">
+            <div class="input-group" style="width: 550px;margin-top: 60px; margin-bottom: 10px">
+                <input type="text" class="form-control" style="border-color: #f0f0f0" placeholder="모임을 검색하세요"
+                       aria-label="Search" id="searchInput">
+                <button type="button" class="btn btn-primary" id="searchButton"
+                        style="background-color:#f0f0f0; font-weight: bolder; color:#000000; border-color:#f0f0f0; width: 50px; height: 40px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                         class="bi bi-search" viewBox="0 0 16 16">
+                        <path
+                                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                </button>
             </div>
         </div>
-        <!-- 이전/다음 버튼 -->
-        <a class="carousel-control-prev" href="#myCarousel" role="button" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true" style="background-color: #b7b7b7;"></span>
-            <span class="visually-hidden">이전</span>
-        </a>
+        <!--배너이며 기능은 없음-->
+        <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+            <!-- 캐러셀 인디케이터 -->
+            <ol class="carousel-indicators">
+                <li style="background-color: #5c636a; width: 8px" data-bs-target="#myCarousel" data-bs-slide-to="0"
+                    class="active"></li>
+                <li style="background-color: #5c636a; width: 8px" data-bs-target="#myCarousel"
+                    data-bs-slide-to="1"></li>
+                <li style="background-color: #5c636a; width: 8px" data-bs-target="#myCarousel"
+                    data-bs-slide-to="2"></li>
+            </ol>
+            <!-- 캐러셀 슬라이더 내용 -->
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img class="img-fluid" src="/images/banner.png" alt="이미지 1">
+                </div>
+                <div class="carousel-item">
+                    <img class="img-fluid" src="/images/banner_2.png" alt="이미지 2">
+                </div>
+                <div class="carousel-item">
+                    <img class="img-fluid" src="/images/banner_3.png" alt="이미지 3">
+                </div>
+            </div>
+            <!-- 이전/다음 버튼 -->
+            <a class="carousel-control-prev" href="#myCarousel" role="button" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true" style="background-color: #b7b7b7;"></span>
+                <span class="visually-hidden">이전</span>
+            </a>
 
-        <a class="carousel-control-next" href="#myCarousel" role="button" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true" style="background-color: #b7b7b7;"></span>
-            <span class="visually-hidden">다음</span>
-        </a>
+            <a class="carousel-control-next" href="#myCarousel" role="button" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true" style="background-color: #b7b7b7;"></span>
+                <span class="visually-hidden">다음</span>
+            </a>
+        </div>
     </div>
-    <!--    모이개 시그니처 부분-->
-    <div style="margin-left: 100px; margin-right: 100px; margin-top:20px; height: 250px">
-    </div>
+    <div class="justify-content-center" style="margin-top: 40px; margin-bottom: 20px">
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#flush-collapseOne" aria-expanded="false"
+                            aria-controls="flush-collapseOne">
+                        모임 신청 안내
+                    </button>
+                </h2>
+                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
+                     data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">
+                        ▷ 모집 기간에만 취소가 가능합니다.
+                        <br>
+                        ▷ 모임의 신청을 취소하면, 결제수단으로 환불됩니다. 별도의 수수료는 발생하지 않습니다.
+                        <br>
+                        ▷ 무료/유료 모임의 신청이 가능하며, 유료모임은 신청과 동시에 결제를 해야합니다.
+                        <br>
+                        ▷ 모임은 개수의 제한없이 신청할 수 있습니다.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#flush-collapseTwo" aria-expanded="false"
+                            aria-controls="flush-collapseTwo">
+                        모이톡 관련 안내
+                    </button>
+                </h2>
+                <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo"
+                     data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">
+                        ▷ 자유롭게 질문/답변 할 수 있습니다.
+                        <br>
+                        ▷ 질문과 답변 시, 서로서로 매너를 지켜주세요.
+                        <br>
+                        ▷ 내가 한 질문과 답변을 분류해서 보고, 검색하고, 정렬할 수 있습니다.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-headingThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#flush-collapseThree" aria-expanded="false"
+                            aria-controls="flush-collapseThree">
+                        멍멍 이야기 안내
+                    </button>
+                </h2>
+                <div id="flush-collapseThree" class="accordion-collapse collapse"
+                     aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">
+                        ▷ 멍멍이야기의 내용은 매주 업데이트 됩니다.
+                        <br>
+                        ▷ 멍멍이야기는 모이개에서 제공하는 자체 게시글입니다.
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div><!--마지막 div-->
 <div class="footer">
@@ -119,9 +190,9 @@
         </div>
     </footer>
     <!-- End of Footer -->
+</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
         crossorigin="anonymous"></script>
-
 </body>
 </html>
