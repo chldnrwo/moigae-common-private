@@ -3,6 +3,7 @@ package com.moigae.application.component.meeting_payment.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moigae.application.component.meeting_payment.application.MeetingPaymentService;
+import com.moigae.application.component.meeting_payment.repository.MeetingPaymentRepository;
 import com.moigae.application.component.user.dto.CustomUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,7 @@ public class PaymentController {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String SECRET_KEY = "test_sk_BE92LAa5PVbkGazRNzZr7YmpXyJj";
+    private final MeetingPaymentRepository meetingPaymentRepository;
 
     @PostConstruct
     private void init() {
@@ -106,5 +109,21 @@ public class PaymentController {
         response.put("exists", exists);
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/meetings/cancel")
+    @ResponseBody
+    @Transactional
+    public Map<String, Boolean> findPassWord(
+            @RequestBody Map<String, String> req) {
+
+        String paymentId = req.get("paymentId");
+        Long paymentIdLong = Long.parseLong(paymentId);
+        meetingPaymentRepository.deleteById(paymentIdLong);
+
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("statusSym", true);
+
+        return response;
     }
 }

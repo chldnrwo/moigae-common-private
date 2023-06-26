@@ -1,7 +1,6 @@
 package com.moigae.application.component.user.api;
 
 import com.moigae.application.component.meeting.application.MeetingPaymentCustomService;
-import com.moigae.application.component.meeting.domain.Meeting;
 import com.moigae.application.component.meeting.repository.MeetingSymRepository;
 import com.moigae.application.component.meeting_payment.domain.MeetingPayment;
 import com.moigae.application.component.qna.api.service.QuestionService;
@@ -53,30 +52,11 @@ public class MypageController {
     public String myPageMoim(Model model, @AuthenticationPrincipal CustomUser customUser) {
         String id = customUser.getId();
         List<MeetingPayment> meetingPayments = meetingPaymentService.fetchMeetingPaymentsByUserId(id);
-        MeetingPayment meetingPayment = meetingPaymentService.fetchMeetingPaymentByUserId(id);
-
-        if (meetingPayment == null) {
-            System.out.println("imnull");
-            model.addAttribute("isMeetingPaymentNull", true);
-        } else {
-            Meeting meeting = meetingPayment.getMeeting();
-            Long paidAmount = meetingPayment.getPaidAmount();
-
-            model.addAttribute("meetingPayment", meetingPayment);
-            model.addAttribute("meeting", meeting);
-            model.addAttribute("paidAmount", paidAmount);
-        }
 
         model.addAttribute("customUser", customUser);
         model.addAttribute("meetingPayments", meetingPayments);
-        model.addAttribute("meetingPayment", meetingPayment);
-        model.addAttribute("meeting", meeting);
-        model.addAttribute("paidAmount", paidAmount);
         return "users/mypageMoim";
     }
-
-
-
 
 
     @GetMapping("/mypageCart")
